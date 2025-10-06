@@ -18,7 +18,8 @@ maintainers = [
     { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
 ]
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "Apache-2.0" 
+license-files = ["LICENSE"]
 
 [project.urls]
 Repository = "https://github.com/jmriosal/peft-sparta"
