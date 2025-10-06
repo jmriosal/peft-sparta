@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools >= 77.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "peft-sparta"
 version = "0.0.1"
@@ -16,10 +20,5 @@ maintainers = [
 readme = "README.md"
 license = {file = "LICENSE"}
 
-
 [project.urls]
 Repository = "https://github.com/jmriosal/peft-sparta"
-
-[build-system]
-requires = ["setuptools >= 77.0", "wheel"]
-build-backend = "setuptools.build_meta"
