@@ -1,0 +1,25 @@
+[project]
+name = "peft-sparta"
+version = "0.0.1"
+description = "SpaRTA adapter invocation code"
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.2.1",
+    "transformers>=4.47.0",
+]
+authors = [
+    { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
+]
+maintainers = [
+    { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+
+
+[project.urls]
+Repository = "https://github.com/jmriosal/peft-sparta"
+
+[build-system]
+requires = ["setuptools >= 77.0", "wheel"]
+build-backend = "setuptools.build_meta"
