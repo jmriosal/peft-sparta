@@ -1,1 +1,1 @@
-
+from .sparta_model import SpaRTAforSequenceClassification
