@@ -21,4 +21,4 @@ def f1_score(cm):
 
 def bacc(cm):
     """balanced accuracy"""
-    return (cm.diag() / cm.sum(dim=1)).mean().item()
+    return (cm.diag() / cm.sum(dim=1)).nanmean().item()
