@@ -19,8 +19,17 @@ from peft_sparta import SpaRTAforSequenceClassification
 model = SpaRTAforSequenceClassification(
     adapter = "adapter_fpath", 
     device = 'cuda', # cpu if cuda is not available
-    input_template = "if one was used to train the adapter, possible including instruction", 
-)                                
+    input_template = "used to train the adapter, possible including a instruction", 
+)
+
+cases = ["list of input cases",
+          "in the format used during training",
+          "consumed by the input_template"]
+
+model.classify(cases) # for class probs of each case
+
+model.decide_class(cases) # for the predicted classes of each case
+
 ```
 
 
