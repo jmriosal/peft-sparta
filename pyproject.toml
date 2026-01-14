@@ -9,7 +9,7 @@ description = "Invocation code to load and run SpaRTA adapters for inference"
 requires-python = ">=3.9"
 dependencies = [
     "torch",
-    "transformers>=4.47.0",
+    "transformers",
 ]
 authors = [
     { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
