@@ -23,11 +23,11 @@ class SpaRTAforSequenceClassification:
         # get headless base model
         if model:
             # reuse loaded model
-            assert(model.config._name_or_path == config['_name_or_path'])
+            assert(model.config._name_or_path == config['sparta_pretrained_model'])
             base_model = model.base_model
         else:
             # load from disk
-            base_model = AutoModel.from_pretrained(config['_name_or_path'], 
+            base_model = AutoModel.from_pretrained(config['sparta_pretrained_model'],
                                                    torch_dtype=torch.bfloat16)
         base_model.eval().to(device)
         hidden_size = base_model.config.hidden_size
@@ -69,7 +69,13 @@ class SpaRTAforSequenceClassification:
         
         self.base_model, self.head, self.device = base_model, head, device
 
-        self.tokenizer = AutoTokenizer.from_pretrained(adapter, padding_side='left')         
+        if os.path.isfile(os.path.join(adapter, 'tokenizer_config.json')):
+            tk_source = adapter
+        else:
+            # if tokenizer is not modified during adaption by adding new (special) tokens
+            # there is no need to save/upload it with adapter
+            tk_source = config['sparta_pretrained_model'] # base model
+        self.tokenizer = AutoTokenizer.from_pretrained(tk_source, padding_side='left')
         assert(len(self.tokenizer) == self.base_model.config.vocab_size)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
