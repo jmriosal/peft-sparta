@@ -204,6 +204,7 @@ class SpaRTAforCausalLM:
         return self.base_model.generate(*args, **kwargs)
 
     def save_pretrained(self, *args, **kwargs):
+        # model saved with adapter merged into base model
         self.base_model.save_pretrained(*args, **kwargs)
 
 
