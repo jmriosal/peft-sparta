@@ -1,11 +1,13 @@
 import os
 import json
 import torch
-from transformers import AutoModel, AutoTokenizer
+import safetensors.torch
+from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM
 from .metrics import mcc, f1_score, bacc
 
+
 class SpaRTAforSequenceClassification:
-    """Loads a Sparse Adapted Model for Inference"""
+    """Loads a Sparse Adapted SeqClassification Model for Inference"""
 
     @torch.no_grad()
     def __init__(self, adapter, model=None, device='cpu', input_template=None):
@@ -154,4 +156,88 @@ class SpaRTAforSequenceClassification:
         self.base_model.to(device)
         self.head.to(device)
         self.device = device
-        
+
+
+
+class SpaRTAforCausalLM:
+    """Loads a Sparse Adapted Causal Model for Inference"""
+
+    @torch.no_grad()
+    def __init__(self, adapter, device_map='cpu'):
+
+        self.adapter = adapter
+
+        with open(os.path.join(adapter, 'config.json'), 'r') as f:
+            config = json.load(f)
+
+        base_model = AutoModelForCausalLM.from_pretrained(
+                config['sparta_pretrained_model'],
+                torch_dtype=torch.bfloat16,
+                device_map=device_map).eval()
+
+        # merge SpaRTA adapter into base model
+        sparse_deltas = load_sparse_deltas(adapter)
+        for name, param in base_model.named_parameters():
+            indices = sparse_deltas['indices'][name].to(param.device).unbind(1)
+            chosen_params = param[indices].float()
+            deltas = sparse_deltas['deltas'][name].to(param.device).float()
+            param[indices] = (chosen_params + deltas).to(param.dtype)
+        del indices, deltas, sparse_deltas
+
+        if not hasattr(base_model, 'device'):
+            base_model.device = base_model.get_input_embeddings().weight.device
+
+        self.base_model = base_model
+
+    def __repr__(self):
+        return (f"(SpaRTA)ModelForCausalLM(\n"
+                f"\tadapter = '{self.adapter}'\n"
+                f"\tbase model = '{self.base_model.config._name_or_path}'\n)")
+
+    def __getattr__(self, name):
+        return getattr(self.base_model, name)
+
+    def __call__(self, *args, **kwargs):
+        return self.base_model.forward(*args, **kwargs)
+
+    def generate(self, *args, **kwargs):
+        return self.base_model.generate(*args, **kwargs)
+
+    def save_pretrained(self, *args, **kwargs):
+        self.base_model.save_pretrained(*args, **kwargs)
+
+
+def load_sparse_deltas(adapter_fpath):
+    st_fpath = os.path.join(adapter_fpath, 'sparse_deltas.safetensors')
+    pt_fpath = os.path.join(adapter_fpath, 'sparse_deltas.pt')
+    if os.path.isfile(st_fpath):
+        data = safetensors.torch.load_file(st_fpath, device='cpu')
+        sparse_deltas = {'indices': {}, 'deltas': {}}
+        for k, v in data.items():
+            if k.startswith('indices.'):
+                sparse_deltas['indices'][k[8:]] = v
+            elif k.startswith('deltas.'):
+                sparse_deltas['deltas'][k[7:]] = v
+            else:
+                raise ValueError(f"Invalid key '{k}' in file '{st_fpath}'")
+    elif os.path.isfile(pt_fpath):
+        sparse_deltas = torch.load(pt_fpath, map_location='cpu', weights_only=True)
+    else:
+        raise FileNotFoundError(f"No SpaRTA adapter found in {adapter_fpath}")
+    return sparse_deltas
+
+
+
+
+def convert_pt_to_safetensors(adapter_fpath):
+    pt_fpath = os.path.join(adapter_fpath,'sparse_deltas.pt')
+    sparse_deltas = torch.load(pt_fpath, map_location='cpu')
+
+    data = {} # tensors
+    for k, v in sparse_deltas['indices'].items():
+        data[f"indices.{k}"] = v.contiguous()
+    for k, v in sparse_deltas['deltas'].items():
+        data[f"deltas.{k}"] = v.contiguous()
+
+    st_fpath = os.path.join(adapter_fpath,'sparse_deltas.safetensors')
+    safetensors.torch.save_file(data, st_fpath)
