@@ -1,3 +1,3 @@
-from .sparta_model import SpaRTAforSequenceClassification
+from .sparta_model import SpaRTAforSequenceClassification, SpaRTAforCausalLM
 
-__all__ = ["SpaRTAforSequenceClassification"]
+__all__ = ["SpaRTAforSequenceClassification", "SpaRTAforCausalLM"]
