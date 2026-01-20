@@ -223,11 +223,25 @@ for sentence, pos_prob in zip(sentences, class_probs[:,1]):
 ```
 
 ```python
-model.decide_class(sentences)
+classes = model.decide_class(sentences)
+
+for sentence, sentence_class in zip(sentences, classes):
+    print(f"'{sentence_class}':  {sentence['sentence']}")
+
 ```
+
 ```none
-['positive', 'negative', 'positive', 'negative']
+ Sentiment   Sentence
+-----------  -------------------------------
+'positive':  I enjoyed very much the movie.
+'negative':  It was painful to watch.
+'positive':  I couldn't enjoy more the movie.
+'negative':  It was a bad movie.
 ```
+
+
+
+
 
 ## Citation
 
