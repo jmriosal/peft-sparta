@@ -131,6 +131,35 @@ for sentence, sentence_class in zip(sentences, classes):
 
 ### Input templates
 
+Sometimes the input to the model may need to be formated before our adapted model can processs it. 
+This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formated with the model chat template, can be advantageous. In these cases, we can use the following *input_template* argument to format raw inputs into the format used during training. 
+
+To see this, let's use [another SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b_it-sst2) for *sentiment classification* based on the [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it) model.  
+
+
+```bash
+hf download jesusriosal/sparta-gemma_2b-sst2 --local-dir '/my_sparta_adapters/sparta-gemma_2b_it/'
+```
+
+```python
+
+from peft_sparta import SpaRTAforSequenceClassification
+
+adapter_dir = '/my_sparta_adapters/sparta-gemma_2b_it/'
+
+model = SpaRTAforSequenceClassification(
+    adapter=adapter_dir,
+    device='cuda',
+    input_template = ("<start_of_turn>user\n"
+                      "Determine the sentiment of the following sentence about a movie. "
+                      "The sentiment can only be classified as positive or negative.\n"
+                      "Sentence: {sentence}" 
+                      "<end_of_turn>\n<start_of_turn>model\n"
+                      "The sentiment of the sentence is")
+    )
+```
+
+
 ## Citation
 
 ```bibtex
