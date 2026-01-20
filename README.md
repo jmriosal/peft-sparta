@@ -169,7 +169,21 @@ print(model)
 )
 ```
 
-This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template*, which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
+This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (*model.template*), which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
+
+
+```python
+print(model.template)
+```
+
+```none
+<start_of_turn>user
+Determine the sentiment of the following sentence about a movie. The sentiment can only be classified as positive or negative.
+Sentence: {sentence}<end_of_turn>
+<start_of_turn>model
+The sentiment of the sentence is
+```
+
 
 For example, the sentence 
 
