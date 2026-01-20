@@ -222,8 +222,12 @@ for sentence, pos_prob in zip(sentences, class_probs[:,1]):
    0%	It was a bad movie.
 ```
 
- 
-
+```python
+model.decide_class(sentences)
+```
+```none
+['positive', 'negative', 'positive', 'negative']
+```
 
 ## Citation
 
