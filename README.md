@@ -203,9 +203,9 @@ The sentiment of the sentence is
 before passing it to the model for classification 
 
 
+Thus, to classify the (raw, non-formatted) sentences [above](inputs)
 
-
-
+ 
 
 
 ## Citation
