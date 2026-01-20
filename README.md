@@ -203,7 +203,24 @@ The sentiment of the sentence is
 before passing it to the model for classification 
 
 
-Thus, to classify the (raw, non-formatted) sentences [above](#inputs)
+Thus, to classify the (raw, non-formatted) sentences [above](#inputs) we do as follows
+
+```python
+sentences = [{'sentence': sent} for sent in sentences]
+
+class_probs = model.classify(sentences)
+
+# prob of positive sentiment for each sentence 
+for sentence, pos_prob in zip(sentences, class_probs[:,1]):
+    print(f"{pos_prob.item()*100:>4.0f}%\t{sentence['sentence']}")
+```
+ 
+```none
+ 100%	I enjoyed very much the movie.
+   0%	It was painful to watch.
+ 100%	I couldn't enjoy more the movie.
+   0%	It was a bad movie.
+```
 
  
 
