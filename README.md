@@ -15,11 +15,11 @@ pip install -i https://test.pypi.org/simple/ peft-sparta
 
 ### Download SpaRTA adapter from HF repository
 
-Let's download a SpaRTA adapter that spacializes the *google/gemma-2b* model to do *sentiment classification* of English sentences.
+Let's download a [SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b-sst2) that spacializes the *google/gemma-2b* model to do *sentiment classification* of English sentences.
 
 ```bash
 
-ADAPTER_DIR='~/my_sparta_adapters/sparta-gemma_2b'
+ADAPTER_DIR='/my_sparta_adapters/sparta-gemma_2b/'
 
 mkdir -p $ADAPTER_DIR
 
@@ -28,15 +28,14 @@ hf download jesusriosal/sparta-gemma_2b-sst2 --local-dir $ADAPTER_DIR
 ```
 
 
-### Load SpaRTA adapter and create adapted model
+### Load the SpaRTA adapter and create the adapted model
 
  ```python
 from peft_sparta import SpaRTAforSequenceClassification
 
 model = SpaRTAforSequenceClassification(
-    adapter = "adapter_fpath", 
-    device = 'cuda', # cpu if cuda is not available
-    input_template = "used to train the adapter, possible including a instruction", 
+    adapter = "/my_sparta_adapters/sparta-gemma_2b/", 
+    device = 'cuda',
 )
 
 cases = ["list of input cases",
