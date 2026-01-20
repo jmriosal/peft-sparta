@@ -169,7 +169,7 @@ print(model)
 )
 ```
 
-This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (*model.template*), which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
+This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (see *model.template* below), which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
 
 
 ```python
