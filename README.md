@@ -15,10 +15,11 @@ pip install -i https://test.pypi.org/simple/ peft-sparta
 
 ### Download SpaRTA adapter from HF repository
 
+Let's download a SpaRTA adapter that spacializes the *google/gemma-2b* model to do *sentiment classification* of English sentences.
 
 ```bash
 
-ADAPTER_DIR='~/my_sparta_adapters/'
+ADAPTER_DIR='~/my_sparta_adapters/sparta-gemma_2b'
 
 mkdir -p $ADAPTER_DIR
 
