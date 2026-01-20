@@ -33,11 +33,26 @@ hf download jesusriosal/sparta-gemma_2b-sst2 --local-dir $ADAPTER_DIR
  ```python
 from peft_sparta import SpaRTAforSequenceClassification
 
+adapter_dir = '/my_sparta_adapters/sparta-gemma_2b/'
+
 model = SpaRTAforSequenceClassification(
-    adapter = "/my_sparta_adapters/sparta-gemma_2b/", 
-    device = 'cuda',
+    adapter = adapter_dir,
+    device = 'cuda')
+
+print(model)
+```
+
+```none
+(SpaRTA)ModelForSeqClassification(
+	adapter = '/my_sparta_adapters/sparta-gemma_2b/'
+	model = 'google/gemma-2b'
+	id2label = {0: 'negative', 1: 'positive'}
 )
 
+```
+
+
+```python
 cases = ["list of input cases",
           "in the format used during training",
           "consumed by the input_template"]
