@@ -129,7 +129,9 @@ for sentence, sentence_class in zip(sentences, classes):
 'negative':  It was a bad movie.
 ```
 
- ## Citation
+### Input templates
+
+## Citation
 
 ```bibtex
 @article{rios2025sparsity,
