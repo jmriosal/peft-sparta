@@ -158,6 +158,11 @@ model = SpaRTAforSequenceClassification(
                       "The sentiment of the sentence is")
     )
 ```
+
+```none
+
+```
+
 This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template*, which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
 
 For example, the sentence 
@@ -176,6 +181,12 @@ Sentence: I enjoyed very much the movie.<end_of_turn>
 The sentiment of the sentence is
 ```
 before passing it to the model for classification 
+
+
+
+
+
+
 
 ## Citation
 
