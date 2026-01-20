@@ -60,7 +60,9 @@ sentences = ["I enjoyed very much the movie.",
              "I couldn't enjoy more the movie.",
              "It was a bad movie."]
 ```
-### Classify (probabilistically)
+### Inference 
+
+#### Classify (probabilistically)
 
 The model gives us the probabilities that each sentence (row) has negative (first column) or positive (second column) sentiment.
 
@@ -104,7 +106,7 @@ for sentence, pos_prob in zip(sentences, class_probs[:,1]):
 
 
 
-### Decide on classes
+#### Decide on classes
 
 We have seen how the model makes probabilistic assessments of the sentiment of each sentence. If we want the model to make a decison on whether the sentence has positive or negative sentiment, we can use: 
 
@@ -114,12 +116,12 @@ classes = model.decide_class(sentences)
 
 to obtaine the model's predicted class of each sentence. Basically, the model takes the most likely class as its sentiment prediction of a sentence
 ```python
-for sentence, sent_class in zip(sentences, classes):
-    print(f"'{sent_class}':  {sentence}")
+for sentence, sentence_class in zip(sentences, classes):
+    print(f"'{sentence_class}':  {sentence}")
 ```
 
 ```none
-Sentiment    Sentence
+ Sentiment   Sentence
 -----------  -------------------------------
 'positive':  I enjoyed very much the movie.
 'negative':  It was painful to watch.
