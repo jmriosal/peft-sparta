@@ -13,6 +13,11 @@ pip install -i https://test.pypi.org/simple/ peft-sparta
 
 ## How to use it
 
+### Download SpaRTA adapter from HF repository
+
+
+### Load SpaRTA adapter and create adapted model
+
  ```python
 from peft_sparta import SpaRTAforSequenceClassification
 
