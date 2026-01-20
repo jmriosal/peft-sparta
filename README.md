@@ -16,6 +16,17 @@ pip install -i https://test.pypi.org/simple/ peft-sparta
 ### Download SpaRTA adapter from HF repository
 
 
+```bash
+
+ADAPTER_DIR='~/my_sparta_adapters/'
+
+mkdir -p $ADAPTER_DIR
+
+hf download jesusriosal/sparta-gemma_2b-sst2 --local-dir $ADAPTER_DIR
+
+```
+
+
 ### Load SpaRTA adapter and create adapted model
 
  ```python
