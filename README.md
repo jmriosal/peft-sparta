@@ -157,10 +157,16 @@ model = SpaRTAforSequenceClassification(
                       "<end_of_turn>\n<start_of_turn>model\n"
                       "The sentiment of the sentence is")
     )
+
+print(model)
 ```
 
 ```none
-
+(SpaRTA)ModelForSeqClassification(
+	adapter = '/my_sparta_adapters/sparta-gemma_2b_it/'
+	model = 'google/gemma-2b-it'
+	id2label = {0: 'negative', 1: 'positive'}
+)
 ```
 
 This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template*, which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
