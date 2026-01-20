@@ -48,7 +48,6 @@ print(model)
 	model = 'google/gemma-2b'
 	id2label = {0: 'negative', 1: 'positive'}
 )
-
 ```
 
 ### Inputs
@@ -95,11 +94,12 @@ for sentence, pos_prob in zip(sentences, class_probs[:,1]):
 ```
 
 ```none
+ Prob   Sentence
+ ----   -----------------------------
   88%	I enjoyed very much the movie.
    5%	It was painful to watch.
   83%	I couldn't enjoy more the movie.
    3%	It was a bad movie.
-
 ```
 
 
@@ -119,6 +119,8 @@ for sentence, sent_class in zip(sentences, classes):
 ```
 
 ```none
+Sentiment    Sentence
+-----------  -------------------------------
 'positive':  I enjoyed very much the movie.
 'negative':  It was painful to watch.
 'positive':  I couldn't enjoy more the movie.
