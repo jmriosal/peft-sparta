@@ -264,6 +264,11 @@ test_labels = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
 where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
 
+```pyhton
+model.evaluate(test_sentences, test_labels, batch_size=64)
+```
+
+
 ## Citation
 
 ```bibtex
