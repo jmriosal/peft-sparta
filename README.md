@@ -241,6 +241,10 @@ for sentence, sentence_class in zip(sentences, classes):
 
 
 
+## Out-of-Distribution Performance Evaluations 
+
+If you have a labeled dataset on sentence-level sentiment classification, you can evaluate the performace of these models on that dataset 
+
 
 
 ## Citation
