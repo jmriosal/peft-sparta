@@ -270,7 +270,13 @@ test_sentences = [{'sentence': sent} for sent in test_sentences]
 model.evaluate(test_sentences, test_labels, batch_size=64)
 ```
 ```none
-
+loss: 0.002
+accuracy: 100%
+confusion matrix: [5, 0
+                   0, 5]
+balanced accuracy: 100% 
+MCC: 1.0
+F1-score: 1.0
 ```
 
 
