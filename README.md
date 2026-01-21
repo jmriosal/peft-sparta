@@ -243,8 +243,16 @@ for sentence, sentence_class in zip(sentences, classes):
 
 ## Out-of-Distribution Performance Evaluations 
 
-If you have a labeled dataset on sentence-level sentiment classification, you can evaluate the performace of these models on that dataset 
+If you have a labeled dataset of sentences and their sentiment labels, like the one below, you can evaluate the performace of these models on that dataset as follows. 
 
+
+```python
+test_sentences = ["it's a charming and often affecting journey. ", 'unflinchingly bleak and desperate ', 'allows us to hope that nolan is poised to embark a major career as a commercial yet inventive filmmaker. ', "the acting, costumes, music, cinematography and sound are all astounding given the production's austere locales. ", "it's slow -- very, very slow. ", 'although laced with humor and a few fanciful touches, the film is a refreshingly serious look at young women. ', 'a sometimes tedious film. ', "or doing last year's taxes with your ex-wife. ", "you don't have to know about music to appreciate the film's easygoing blend of comedy and romance. ", "in exactly 89 minutes, most of which passed as slowly as if i'd been sitting naked on an igloo, formula 51 sank from quirky to jerky to utter turkey. "]
+
+test_labels = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
+
+```
+where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
 
 ## Citation
