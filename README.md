@@ -265,7 +265,7 @@ where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
 
 ```pyhton
-test_sentences = [{'sentence': sent} for sent in test_sentences]
+test_sentences = [{'sentence': sent} for sent in test_sentences] # for the model with input_template
 
 model.evaluate(test_sentences, test_labels, batch_size=64)
 ```
