@@ -89,7 +89,7 @@ print(model.id2label)
 {'0': 'negative', '1': 'positive'}
 ```
 
-Here is the model's estimated probabilities of each sentence having a positive sentiment   
+Here are the model's estimated probabilities of positive sentiment for each sentence
 
 ```python
 for sentence, pos_prob in zip(sentences, class_probs[:,1]):
