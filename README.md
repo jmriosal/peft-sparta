@@ -2,7 +2,7 @@
 
 SpaRTA (Sparse Random parameTer Adaptation) is a Parameter-Efficient Fine-Tuning (PEFT) alternative to traditional LoRA that reduces the number of trainable parameters by randomly selecting a very small proportion of the model parameters to train on.
 
-This Python package for now provides the invocation code necessary to load and run SpaRTA adapted models for inference. For an implementation of SpaRTA adapters and their training see https://github.com/IBM/sparta. For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975). 
+This Python package provides the invocation code necessary to load and run SpaRTA adapted models for inference. For an implementation of SpaRTA adapters and their training see https://github.com/IBM/sparta. For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975). 
 
 
 ## Installation
@@ -13,7 +13,7 @@ pip install -i https://test.pypi.org/simple/ peft-sparta
 
 ## How to use it
 
-### Download SpaRTA adapter from HF repository
+### Download a SpaRTA adapter from a Hugging Face repository
 
 Let's download a [SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b-sst2) that spacializes the *google/gemma-2b* model to do *sentiment classification* of English sentences.
 
@@ -62,15 +62,16 @@ sentences = ["I enjoyed very much the movie.",
 ```
 ### Inference 
 
-#### Classify (probabilistically)
+#### Probabilistic classification
 
-The model gives us the probabilities that each sentence (row) has negative (first column) or positive (second column) sentiment.
+The adapted model can give us its estimated probabilities that each sentence (row) has negative (first column) or positive (second column) sentiment.
 
 ```python
 
 class_probs = model.classify(sentences) 
 
 print(class_probs)
+```
 
 ```none
 tensor([[0.1152, 0.8848],
