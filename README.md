@@ -133,7 +133,7 @@ for sentence, sentence_class in zip(sentences, classes):
 ### Input templates
 
 Sometimes the input to the model may need to be formatted before our adapted model can processs it. 
-This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formatted with the model's chat template, can be advantageous. In these cases, we can use the following *input_template* argument to specify the formatting used over raw inputs during training. 
+This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formatted with the model's chat template, can be advantageous. In these cases, we can use the following *input_template* argument to specify the formatting over raw inputs used during training, and needed during inference. 
 
 To see this, let's use [another SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b_it-sst2) for *sentiment classification* based on the [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it) model.  
 
