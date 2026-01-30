@@ -170,7 +170,7 @@ print(model)
 )
 ```
 
-This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (see *model.template* below), which included the task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
+This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (see *model.template* below), which included a task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
 
 
 ```python
@@ -204,7 +204,7 @@ The sentiment of the sentence is
 before passing it to the model for classification 
 
 
-Thus, to classify the (raw, non-formatted) sentences [above](#inputs) we do as follows
+Thus, to classify the (raw, non-formatted) sentences [above](#inputs) we proceed as follows
 
 ```python
 sentences = [{'sentence': sent} for sent in sentences]
