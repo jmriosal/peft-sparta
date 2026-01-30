@@ -133,7 +133,7 @@ for sentence, sentence_class in zip(sentences, classes):
 ### Input templates
 
 Sometimes the input to the model may need to be formatted before our adapted model can processs it. 
-This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formatted with the model's chat template, can be advantageous. In these cases, we can use the following *input_template* argument to specify the formatting over raw inputs used during training, and needed during inference. 
+This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formatted with the model's chat template, can be advantageous. In these cases, we can use the following `input_template` argument to specify the formatting over raw inputs used during training, and needed during inference. 
 
 To see this, let's use [another SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b_it-sst2) for *sentiment classification* based on the [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it) model.  
 
@@ -170,7 +170,7 @@ print(model)
 )
 ```
 
-This SpaRTA adapter was trained formating the input sentences to be classified with the *input_template* (see *model.template* below), which included a task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
+This SpaRTA adapter was trained formating the input sentences to be classified with the `input_template` (see `model.template` printout below), which included a task instruction. This ensures that during inference the same formatting is used on the inputs to be classified.
 
 
 ```python
@@ -265,13 +265,14 @@ test_labels = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
 ```
 where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
-We evaluate the performance of the model on this labeled dataset as follows. We will need to put each sentence within a dictionary with a key named 'sentence' for the model with the *input_template*, so the sentences can be consumed by it accordingly.
+We evaluate the performance of the model on this labeled dataset as follows. We will need to first put each sentence within a dictionary with a key named `'sentence'` for the model with the `input_template`, so the sentences can be consumed by it accordingly.
 
 ```pyhton
 test_sentences = [{'sentence': sent} for sent in test_sentences] # for the model with input_template
 
 model.evaluate(test_sentences, test_labels, batch_size=64)
 ```
+
 ```none
 loss: 0.002
 accuracy: 100%
