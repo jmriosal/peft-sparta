@@ -89,7 +89,7 @@ print(model.id2label)
 {'0': 'negative', '1': 'positive'}
 ```
 
-Here is probability that each sentence has a positive sentiment given by the model  
+Here is the model's estimated probabilities of each sentence having a positive sentiment   
 
 ```python
 for sentence, pos_prob in zip(sentences, class_probs[:,1]):
@@ -107,15 +107,15 @@ for sentence, pos_prob in zip(sentences, class_probs[:,1]):
 
 
 
-#### Decide on classes
+#### Deciding the sentiment class of each sentence (deterministic classification)
 
-We have seen how the model makes probabilistic assessments of the sentiment of each sentence. If we want the model to make a decison on whether the sentence has positive or negative sentiment, we can use: 
+We have seen how the model makes probabilistic assessments of the sentiment of each sentence. If we want the model to make a definitive decison on whether the sentence has positive or negative sentiment, we can use: 
 
 ```python
 classes = model.decide_class(sentences) 
 ```
 
-to obtaine the model's predicted class of each sentence. Basically, the model takes the most likely class as its sentiment prediction of a sentence
+to obtain the model's predicted class of each sentence. Basically, the model takes the most likely class as its sentiment prediction of a sentence
 ```python
 for sentence, sentence_class in zip(sentences, classes):
     print(f"'{sentence_class}':  {sentence}")
@@ -132,8 +132,8 @@ for sentence, sentence_class in zip(sentences, classes):
 
 ### Input templates
 
-Sometimes the input to the model may need to be formated before our adapted model can processs it. 
-This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formated with the model chat template, can be advantageous. In these cases, we can use the following *input_template* argument to format raw inputs into the format used during training. 
+Sometimes the input to the model may need to be formatted before our adapted model can processs it. 
+This is typicaly the case when using instruction-following models, for which wrapping the input within an instruction, formatted with the model's chat template, can be advantageous. In these cases, we can use the following *input_template* argument to specify the formatting used over raw inputs during training. 
 
 To see this, let's use [another SpaRTA adapter](https://huggingface.co/jesusriosal/sparta-gemma_2b_it-sst2) for *sentiment classification* based on the [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it) model.  
 
