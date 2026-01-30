@@ -35,20 +35,19 @@ class SpaRTAforSequenceClassification:
         hidden_size = base_model.config.hidden_size
 
         # add new token embeddings if added to model
-        new_embeddings_fpath = os.path.join(adapter, 'new_embeddings_init.pt')  
-        if os.path.exists(new_embeddings_fpath):
+        if any(f.startswith('new_embeddings_init.') for f in os.listdir(adapter)):
             embeddings = base_model.get_input_embeddings()
-            new_embeddings_init = torch.load(new_embeddings_fpath,
-                                             map_location=embeddings.weight.device
-                                             ).to(dtype=embeddings.weight.dtype)
-            num_added_tokens = new_embeddings_init.shape[0]            
+            new_embeddings_init = load_init_tensor(adapter, 'new_embeddings',
+                                                   embeddings.weight.device
+                                                  ).to(dtype=embeddings.weight.dtype)
+            num_added_tokens = new_embeddings_init.shape[0]
             with torch.no_grad():
                 embeddings.weight.data = torch.cat((embeddings.weight.data, new_embeddings_init))
             embeddings.num_embeddings += num_added_tokens
             base_model.config.vocab_size += num_added_tokens
         
         # merge SpaRTA adapter into base model
-        sparse_deltas = torch.load(os.path.join(adapter, 'sparse_deltas.pt'), map_location='cpu')
+        sparse_deltas = load_sparse_deltas(adapter)
         for name, param in base_model.named_parameters():  
             name = base_model.base_model_prefix + '.' + name
             indices = sparse_deltas['indices'][name].to(device).unbind(1)
@@ -59,7 +58,7 @@ class SpaRTAforSequenceClassification:
         del indices
 
         # create sequence classification head
-        w0 = torch.load(os.path.join(adapter,'head_init.pt'), map_location=device)
+        w0 = load_init_tensor(adapter, 'head', device)
         num_labels = w0.shape[0]
         assert(num_labels == len(self.id2label))
         deltas = sparse_deltas['deltas']['score.weight'].detach().to(device)
@@ -208,9 +207,9 @@ class SpaRTAforCausalLM:
         self.base_model.save_pretrained(*args, **kwargs)
 
 
-def load_sparse_deltas(adapter_fpath):
-    st_fpath = os.path.join(adapter_fpath, 'sparse_deltas.safetensors')
-    pt_fpath = os.path.join(adapter_fpath, 'sparse_deltas.pt')
+def load_sparse_deltas(adapter_dpath):
+    st_fpath = os.path.join(adapter_dpath, 'sparse_deltas.safetensors')
+    pt_fpath = os.path.join(adapter_dpath, 'sparse_deltas.pt')
     if os.path.isfile(st_fpath):
         data = safetensors.torch.load_file(st_fpath, device='cpu')
         sparse_deltas = {'indices': {}, 'deltas': {}}
@@ -224,15 +223,26 @@ def load_sparse_deltas(adapter_fpath):
     elif os.path.isfile(pt_fpath):
         sparse_deltas = torch.load(pt_fpath, map_location='cpu', weights_only=True)
     else:
-        raise FileNotFoundError(f"No SpaRTA adapter found in {adapter_fpath}")
+        raise FileNotFoundError(f"No SpaRTA adapter found in {adapter_dpath}")
     return sparse_deltas
 
+
+def load_init_tensor(adapter_dpath, tensor_name, device):
+    st_fpath = os.path.join(adapter_dpath, f'{tensor_name}_init.safetensors')
+    pt_fpath = os.path.join(adapter_dpath, f'{tensor_name}_init.pt')
+    if os.path.isfile(st_fpath):
+        tensor = safetensors.torch.load_file(st_fpath, device=device)[tensor_name]
+    elif os.path.isfile(pt_fpath):
+        tensor = torch.load(pt_fpath, map_location=device, weights_only=True)
+    else:
+        raise FileNotFoundError(f"No init tensor for {tensor_name} found in {adapter_dpath}")
+    return tensor
 
 
 
 def convert_pt_to_safetensors(adapter_fpath):
-    pt_fpath = os.path.join(adapter_fpath,'sparse_deltas.pt')
-    sparse_deltas = torch.load(pt_fpath, map_location='cpu')
+    pt_fpath = os.path.join(adapter_fpath, 'sparse_deltas.pt')
+    sparse_deltas = torch.load(pt_fpath, map_location='cpu', weights_only=True)
 
     data = {} # tensors
     for k, v in sparse_deltas['indices'].items():
