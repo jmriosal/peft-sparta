@@ -246,7 +246,7 @@ for sentence, sentence_class in zip(sentences, classes):
 
 If you have a labeled dataset with English sentences and their sentiment labels, like the one below, you can evaluate the performace of these models on that dataset as follows. 
 
-Given the following labeled dataset:
+Given the following dataset of new, unseen sentences and their sentiment labels:
 
 ```python
 test_sentences = ["it's a charming journey. ",
@@ -265,6 +265,7 @@ test_labels = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
 ```
 where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
+We evaluate the performance of the model on this labeled dataset as follows, after putting each sentence within a dictionary with a key named 'sentence' to be consumed by the *input_template*.
 
 ```pyhton
 test_sentences = [{'sentence': sent} for sent in test_sentences] # for the model with input_template
