@@ -244,8 +244,9 @@ for sentence, sentence_class in zip(sentences, classes):
 
 ### Out-of-Distribution performance evaluations 
 
-If you have a labeled dataset of sentences and their sentiment labels, like the one below, you can evaluate the performace of these models on that dataset as follows. 
+If you have a labeled dataset with English sentences and their sentiment labels, like the one below, you can evaluate the performace of these models on that dataset as follows. 
 
+Given the following labeled dataset:
 
 ```python
 test_sentences = ["it's a charming journey. ",
