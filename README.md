@@ -265,7 +265,7 @@ test_labels = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
 ```
 where a label of 0 represents *negative* sentiment and a label of 1 *positive*.
 
-We evaluate the performance of the model on this labeled dataset as follows, after putting each sentence within a dictionary with a key named 'sentence' to be consumed by the *input_template*.
+We evaluate the performance of the model on this labeled dataset as follows, after putting each sentence within a dictionary with a key named 'sentence' so they can be consumed by the *input_template*.
 
 ```pyhton
 test_sentences = [{'sentence': sent} for sent in test_sentences] # for the model with input_template
