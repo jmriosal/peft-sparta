@@ -237,18 +237,3 @@ def load_init_tensor(adapter_dpath, tensor_name, device):
     else:
         raise FileNotFoundError(f"No init tensor for {tensor_name} found in {adapter_dpath}")
     return tensor
-
-
-
-def convert_pt_to_safetensors(adapter_fpath):
-    pt_fpath = os.path.join(adapter_fpath, 'sparse_deltas.pt')
-    sparse_deltas = torch.load(pt_fpath, map_location='cpu', weights_only=True)
-
-    data = {} # tensors
-    for k, v in sparse_deltas['indices'].items():
-        data[f"indices.{k}"] = v.contiguous()
-    for k, v in sparse_deltas['deltas'].items():
-        data[f"deltas.{k}"] = v.contiguous()
-
-    st_fpath = os.path.join(adapter_fpath,'sparse_deltas.safetensors')
-    safetensors.torch.save_file(data, st_fpath)
