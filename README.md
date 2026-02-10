@@ -15,7 +15,8 @@ We also include the class
 
 * `SpaRTA`
 
-to facilitate **Spa**rse **R**andom parame**T**er **A**daptation of a model and train your own SpaRTA adapters. This implementation is compatible with some of the most popular trainers, as shown in [here](#how-to-train).  
+to facilitate **Spa**rse **R**andom parame**T**er **A**daptation of a model and train your own SpaRTA adapters. This implementation is compatible with some of the most popular trainers, as shown in [here](#how-to-train-a-sparta-adapter).
+
 
 For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975). The original implementation of SpaRTA can be found in https://github.com/IBM/sparta.
 
@@ -298,7 +299,8 @@ MCC: 1.0
 F1-score: 1.0
 ```
 
-## How to use it for training your own SpaRTA adapter {#how-to-train}
+## How to train a SpaRTA adapter
+
 
 ## Citation
 
