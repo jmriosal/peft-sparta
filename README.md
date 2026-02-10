@@ -9,6 +9,8 @@ This Python package provides the invocation code necessary to load and run SpaRT
 
 to load a SpaRTA adapter along its pre-trained base (transformer) model architectured, respectively, for sequence classification tasks and autoregressive text generation tasks.
 
+We also include the class `SpaRTA` to facilitate **Spa**rse **R**andom parame**T**er **A**daptation of a model and train your own SpaRTA adapters. 
+
       
 For an implementation of SpaRTA adapters and their training see https://github.com/IBM/sparta. For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975).
 
