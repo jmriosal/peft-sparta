@@ -2,6 +2,7 @@
 
 SpaRTA (Sparse Random parameTer Adaptation) is a Parameter-Efficient Fine-Tuning (PEFT) alternative to traditional LoRA that reduces the number of trainable parameters by randomly selecting a very small proportion of the model parameters to train on.
 
+
 This Python package provides the invocation code necessary to load and run SpaRTA-adapted models for inference. In particular, it includes the classes 
 
 * `SpaRTAforSequenceClassification`
@@ -9,10 +10,14 @@ This Python package provides the invocation code necessary to load and run SpaRT
 
 to load a SpaRTA adapter along its pre-trained base (transformer) model architectured, respectively, for sequence classification tasks and autoregressive text generation tasks.
 
-We also include the class `SpaRTA` to facilitate **Spa**rse **R**andom parame**T**er **A**daptation of a model and train your own SpaRTA adapters. 
 
-      
-For an implementation of SpaRTA adapters and their training see https://github.com/IBM/sparta. For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975).
+We also include the class 
+
+* `SpaRTA`
+
+to facilitate **Spa**rse **R**andom parame**T**er **A**daptation of a model and train your own SpaRTA adapters. This implementation is compatible with some of the most popular trainers as shown in [here](#training).  
+
+For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.15975). The original implementation of SpaRTA can be found in https://github.com/IBM/sparta.
 
 
 ## Installation
@@ -21,7 +26,7 @@ For an implementation of SpaRTA adapters and their training see https://github.c
 pip install -i https://test.pypi.org/simple/ peft-sparta
 ```
 
-## How to use it
+## How to use it for inference
 
 ### Download a SpaRTA adapter from a Hugging Face repository
 
@@ -293,6 +298,7 @@ MCC: 1.0
 F1-score: 1.0
 ```
 
+## How to use it for training your own SpaRTA adapter 
 
 ## Citation
 
