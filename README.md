@@ -325,6 +325,11 @@ Our `SpaRTA` wrapper class supports the following arguments:
 * `dropout (float, optional)` Dropout probability applied to the trainable parameters during training. Must be *0 <= dropout < 1*. Defaults to *0*.
 
 
+Training examples
+
+1. [linear regression](x)
+2. [sequence classification](x)
+3. [text generation](x)
 
 
 
