@@ -301,6 +301,17 @@ F1-score: 1.0
 
 ## How to train a SpaRTA adapter
 
+Given a pre-trained model, we prepare it for training with SpaRTA by 
+
+```python
+from peft_sparta import SpaRTA
+
+model = SpaRTA(model, sparsity=0.99)
+```
+
+This adds the adapter to the pre-trained model. The adapter consists of non-trainable randomly sampled *indices* and trainable *deltas*, representing the changes to the original model parameters for those indices. Note that in this case we have chosen a *sparsity* level of 99%, meaning that we target to keep only 1% of the model parameters to be trainable.
+
+
 
 ## Citation
 
