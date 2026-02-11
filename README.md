@@ -327,9 +327,9 @@ Our `SpaRTA` wrapper class supports the following arguments:
 
 The following notebooks illustrate examples of how to train a SpaRTA adapter with several popular trainers. 
 
-1. [linear regression](x)
-2. [sequence classification](x)
-3. [text generation](x)
+1. [linear regression](training_examples/linear_regression.ipynb)
+2. [sequence classification](training_examples/classification.ipynb)
+3. [text generation](training_examples/text_generation.ipynb)
 
 
 
