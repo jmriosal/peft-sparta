@@ -301,7 +301,7 @@ F1-score: 1.0
 
 ## How to train a SpaRTA adapter
 
-Given a pre-trained model, we prepare it for training with SpaRTA by 
+Given a pre-trained model, we prepare it for fine-tuning with SpaRTA by 
 
 ```python
 from peft_sparta import SpaRTA
@@ -325,7 +325,7 @@ Our `SpaRTA` wrapper class supports the following arguments:
 * `dropout (float, optional)` Dropout probability applied to the trainable parameters during training. Must be *0 <= dropout < 1*. Defaults to *0*.
 
 
-Training examples
+The following notebooks illustrate examples of how to train a SpaRTA adapter with several popular trainers. 
 
 1. [linear regression](x)
 2. [sequence classification](x)
