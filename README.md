@@ -316,13 +316,13 @@ Our `SpaRTA` wrapper class supports the following arguments:
 
 * `model (nn.Module)` Pre-trained model to be adapted.
 
-* `sparsity (float)` Target fraction of the total number of model parameters to make non-trainable. Must be 0 < sparsity < 1.
+* `sparsity (float)` Target fraction of the total number of model parameters to make non-trainable. Must be *0 < sparsity < 1*.
 
-* `frozen_modules (list[str], optional)` List of layers name substrings to make entirely frozen (non-trainable). Classification heads ('score') will always be fully-trainable by default. Defaults to ['embed_tokens', 'self_attn.q', 'self_attn.k', 'mlp', 'norm'].
+* `frozen_modules (list[str], optional)` List of layers name substrings to make entirely frozen (non-trainable). Classification heads ("*score*") will always be fully-trainable by default. Defaults to [*"embed_tokens", "self_attn.q", "self_attn.k", "mlp", "norm"*].
 
-* `trainable_tokens (list[int], optional)` List of (unique) token ids whose embeddings should be fully-trainable. Useful for newly added (special) tokens to the vocabulary. Defaults to None.
+* `trainable_tokens (list[int], optional)` List of (unique) token ids whose embeddings should be fully-trainable. Useful for newly added (special) tokens to the vocabulary. Defaults to *None*.
 
-* `dropout (float, optional)` Dropout probability applied to the trainable parameters during training. Must be 0 <= dropout < 1. Defaults to 0.
+* `dropout (float, optional)` Dropout probability applied to the trainable parameters during training. Must be *0 <= dropout < 1*. Defaults to *0*.
 
 
 
