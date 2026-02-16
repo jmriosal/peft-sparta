@@ -348,7 +348,6 @@ The following notebooks illustrate examples of how to train a SpaRTA adapter wit
 @software{rios2025sparta,
   title   = {{PEFT-SpaRTA}},
   author  = {Rios, Jesus},
-  license = {Apache-2.0},
   url     = {https://github.com/jmriosal/peft-sparta}
 }
 
