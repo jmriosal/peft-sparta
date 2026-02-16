@@ -13,10 +13,10 @@ dependencies = [
     "safetensors",
 ]
 authors = [
-    { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
+    {name = "Jesus Rios", email = "jriosal@us.ibm.com"},
 ]
 maintainers = [
-    { name = "Jesus Rios", email = "jriosal@us.ibm.com" },
+    {name = "Jesus Rios", email = "jriosal@us.ibm.com"},
 ]
 readme = "README.md"
 license = "Apache-2.0" 
