@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "peft-sparta"
 version = "0.0.1"
-description = "Invocation code to load and run SpaRTA adapters for inference"
+description = "SpaRTA adaptation wrapper. Invocation code to load and run SpaRTA adapters for inference"
 requires-python = ">=3.9"
 dependencies = [
     "torch",
