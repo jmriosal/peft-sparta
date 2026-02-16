@@ -24,7 +24,7 @@ For more details on how SpaRTA works see our [paper](https://arxiv.org/pdf/2502.
 ## Installation
 
 ```bash
-pip install -i https://test.pypi.org/simple/ peft-sparta
+pip install peft-sparta
 ```
 
 ## How to use it for inference
