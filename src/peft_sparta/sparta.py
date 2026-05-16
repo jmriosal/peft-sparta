@@ -181,6 +181,9 @@ class SpaRTA(nn.Module):
         else:
             return n_trainable
 
+    def print_trainable_parameters(self): # HF-PEFT compatibility
+        self.num_trainable_parameters()
+
     def merge_deltas(self):        
         # add sparse deltas
         for name, param in self.model.named_parameters():
