@@ -184,13 +184,13 @@ class SpaRTA(nn.Module):
         return ((f"deltas.{name}", delta) for name, delta in self.deltas.items()) # iter
 
     def num_trainable_parameters(self, printout=True):
-        n_trainable = sum(param.numel() for param in self.parameters())
+        trainable = sum(param.numel() for param in self.parameters())
         if printout:
             total = sum(param.numel() for param in self.model.parameters())
-            pct = n_trainable / total * 100
-            print(f"Num trainable parameters: {n_trainable:,d} ({pct:.5f}%)")
+            pct = trainable / total * 100
+            print(f"trainable params: {trainable:,d} || all params: {total:,d} || trainable%: {pct:.5f}%")
         else:
-            return n_trainable
+            return trainable
 
     def print_trainable_parameters(self): # HF-PEFT compatibility
         self.num_trainable_parameters()
@@ -247,6 +247,20 @@ class SpaRTA(nn.Module):
             self.model.config.sparta_pretrained_model = self.model.config._name_or_path
             self.model.config.save_pretrained(save_dir) 
             print('\nModel sparse delta parameters saved in: %s' % save_dir)
+
+    @torch.no_grad()
+    def get_init_param(self, target_param):
+        # unmerge deltas from target_param
+        for name, param in self.model.named_parameters():
+            if param is target_param:
+                indices = self.indices[name].to('cpu').int().unbind(1)
+                if param.device.type == 'cpu':
+                    param = param.detach().clone()
+                else: # 'cuda'
+                    param = param.detach().to('cpu')
+                param[indices] = self.original_chosen_params[name].to('cpu').to(dtype=param.dtype)
+                return param
+        raise ValueError("target parameter not found in the model")
 
     def train(self):
         self.model.train()
