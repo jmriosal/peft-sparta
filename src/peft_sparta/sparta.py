@@ -77,16 +77,26 @@ class SpaRTA(nn.Module):
         else:
             self.dropout = None
 
+        if hasattr(model, 'hf_device_map'): # model distributed across devices
+            self.hf_device_map = model.hf_device_map
+
         if hasattr(model, 'num_labels'): # model for sequence classification
             self.num_labels = model.num_labels
 
-        # for compatibility with transformers based trainers:
-        #   SpaRTA model (self) must inherits some attributes 
-        #   from input (PreTrainedModel) model
-        required_attrs = ['config', 'add_model_tags']
-        for attr_name in required_attrs:
+        # for compatibility with transformers (PreTrainedModel)-based trainers
+        required_attributes = ['config', 'add_model_tags']
+        for attr_name in required_attributes:
             if hasattr(model, attr_name):
                 setattr(self, attr_name, getattr(model, attr_name))
+
+    @property
+    def device(self):
+        # Search for the device of the input layer
+        if hasattr(self.model, 'get_input_embeddings'):
+            return self.model.get_input_embeddings().weight.device
+        if hasattr(self.model, 'device'):
+            return self.model.device
+        return next(self.model.parameters()).device
 
     def __repr__(self):
         return (f"SparseModel(sparsity={self.sparsity},"
@@ -176,7 +186,8 @@ class SpaRTA(nn.Module):
     def num_trainable_parameters(self, printout=True):
         n_trainable = sum(param.numel() for param in self.parameters())
         if printout:
-            pct = n_trainable/self.model.num_parameters()*100
+            total = sum(param.numel() for param in self.model.parameters())
+            pct = n_trainable / total * 100
             print(f"Num trainable parameters: {n_trainable:,d} ({pct:.5f}%)")
         else:
             return n_trainable
