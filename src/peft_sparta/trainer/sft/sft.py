@@ -469,22 +469,12 @@ class SFT:
         else:
             loss_baseline = None
         
-        plot(self.stats['train_loss'], w = self.config['logging_freq'],
-             baseline = loss_baseline, 
-             title = 'Training Loss',  
-             save_file = fpath_prefix + 'train_loss.pdf')
-        
-        plot(self.stats['lr'], 
-             title = 'Learning Rate', 
+        plot(self.stats['lr'],
+             title = 'Learning Rate',
              save_file = fpath_prefix + 'learning_rate.pdf')
 
+        train_loss = self.stats['train_loss']
         if self.val_dataloader:
-            plot(self.stats['val_loss'], x_start = 0, # w = 1,
-                 baseline = loss_baseline, 
-                 title = 'Validation Loss',  
-                 save_file = fpath_prefix + 'val_loss.pdf')
-
-            train_loss = self.stats['train_loss']
             val_loss = {'x': self.stats['val_step'], 'y': self.stats['val_loss']}
             plot(train_loss, w = self.config['logging_freq'],
                  baseline = loss_baseline,
@@ -492,12 +482,16 @@ class SFT:
                  anchor = val_loss['y'][0], # pre-trained performace at x=0
                  title = 'Loss',
                  save_file = fpath_prefix + 'loss.pdf')
-
             if self.task == 'SEQ_CLS':
                 plot(self.stats['val_acc'], x_start = 0, # w = 1,
                      baseline = 1.0,
-                     title = 'Validation Accuracy',  
+                     title = 'Validation Accuracy',
                      save_file = fpath_prefix + 'val_acc.pdf')
+        else:
+            plot(train_loss, w = self.config['logging_freq'],
+                 baseline = loss_baseline,
+                 title = 'Training Loss',
+                 save_file = fpath_prefix + 'train_loss.pdf')
 
         if self.config['max_grad_norm']:
             max_grad_norm = self.config['max_grad_norm']
