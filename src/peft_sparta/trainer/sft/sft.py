@@ -68,7 +68,7 @@ class SFT:
 
         self.task = model_config.pop('task')
         if self.task == 'SEQ_CLS':
-            from .models import load_classification_model
+            from .model_loader import load_classification_model
             tokenizer, model = load_classification_model(model_config['name_or_fpath'],
                                                          model_config['num_classes'],
                                                          model_config['id2label'],
@@ -80,7 +80,7 @@ class SFT:
         elif self.task == 'CAUSAL_LM':
             if peft_method == 'head_only':
                 raise ValueError(f"{peft_method=} not supported for GENERATION tasks")
-            from .models import load_generative_model
+            from .model_loader import load_generative_model
             tokenizer, model = load_generative_model(model_config['name_or_fpath'],
                                                      model_config['new_tokens'],
                                                      dtype=model_config.get('dtype', None),
