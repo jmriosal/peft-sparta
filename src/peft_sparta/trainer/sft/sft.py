@@ -89,7 +89,6 @@ class SFT:
             raise NotImplementedError(f"Task: {self.task} not implemented")
   
         self.tokenizer = tokenizer
-        self.tokenizer.padding_side = 'left' if self.task == 'SEQ_CLS' else 'right'
 
         self.num_added_tokens = len(model_config['new_tokens'] or [])
         if model_config['new_tokens'] and peft_config:

@@ -5,8 +5,9 @@ class DataProcessor:
     def __init__(self, tokenizer, task):
         self.tokenizer = tokenizer
         self.task = task
-        
-        
+        self.tokenizer.padding_side = 'left' if self.task == 'SEQ_CLS' else 'right' # CAUSAL_LM
+
+
     def build_dataloader(self, dataset, batch_size, shuffle=False, max_token_len=None): 
 
         if dataset is None:
@@ -33,7 +34,7 @@ class DataProcessor:
             collate_fn = collate_fn
         )
 
-    
+
     def prepare_seq_cls(self, dataset):
 
         assert 'text' in dataset.column_names and 'label' in dataset.column_names, \
@@ -150,10 +151,10 @@ class DataProcessor:
                 input_ids = batch[0]['input_ids'].new_full([len(batch), max_length], self.tokenizer.pad_token_id)
                 labels = batch[0]['labels'].new_full([len(batch), max_length], -100)
                 for i, x in enumerate(batch):
-                    if self.tokenizer.padding_side == 'right':
+                    if self.tokenizer.padding_side == 'right': # for training and evaluation
                         input_ids[i, : x['input_ids'].shape[0]] = x['input_ids']
                         labels[i, : x['labels'].shape[0]] = x['labels']
-                    else: # left
+                    else: # left for generation
                         input_ids[i, -x['input_ids'].shape[0] :] = x['input_ids']
                         labels[i, -x['labels'].shape[0] :] = x['labels']
             return {
