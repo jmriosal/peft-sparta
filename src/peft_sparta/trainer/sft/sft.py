@@ -336,12 +336,14 @@ class SFT:
             return results  
 
 
-    def save_model(self, merged=True, save_tokenizer=True, sft_info=True, overwrite=False):
+    def save_model(self, merged=False, save_tokenizer=True, sft_info=True, overwrite=False):
 
         save_dir = self.config['save_dir']
         os.makedirs(save_dir, exist_ok=overwrite)
 
-        if type(self.model).__name__ == 'SpaRTA':
+        peft_method = self.config['peft_method']
+        if peft_method == 'sparse':
+            assert isinstance(self.model, SpaRTA)
             self.model.save(save_dir, merged)
             if not merged:
                 if self.task == 'SEQ_CLS':
@@ -354,7 +356,16 @@ class SFT:
                     weight_init = self.model.get_init_param(embeddings.weight)
                     torch.save(weight_init.data[-self.num_added_tokens:].clone(),
                                os.path.join(save_dir,'new_embeddings_init.pt'))
-        else:
+        elif peft_method == 'lora':
+            if merged:
+                # saves standalone model, use only after training
+                self.model.merge_and_unload().save_pretrained(save_dir)
+                print("Model saved after an in-place adapter merge: "
+                      "LoRA adapter destroyed. Model can't be trained further.")
+            else:
+                # saves adapter only, training-time safe (non-destructive)
+                self.model.save_pretrained(save_dir)
+        else: # head_only or full_sft
             self.model.save_pretrained(save_dir)
         
         if save_tokenizer:
@@ -367,7 +378,7 @@ class SFT:
                     f.write(' %s: %s\n' % (k, v))
                 #f.write('train_loss: '+ str(self.stats['train_loss'][-1]) +'\n')  
             
-        print('\nModel saved in: %s' % save_dir)
+        print(f"\nModel saved in: {save_dir}")
 
 
     def save_stats(self, subdir=''):
