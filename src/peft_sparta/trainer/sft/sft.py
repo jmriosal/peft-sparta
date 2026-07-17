@@ -3,6 +3,7 @@ import yaml
 import math
 import torch
 from .data_processor import DataProcessor
+from .optim import build_optimizer, build_lr_scheduler
 from ...metrics import mcc, f1_score
 
 
@@ -138,9 +139,7 @@ class SFT:
             self.model.to(device)
             self.device = device
 
-        params_to_optimize = self.model.parameters()
-
-        self.optimizer = self.configure_optimizer(params_to_optimize)
+        self.optimizer = build_optimizer(self.model, self.config, self.task)
 
         self.data_processor = DataProcessor(self.tokenizer, self.task)
 
@@ -151,7 +150,9 @@ class SFT:
             max_token_len = self.config['train_input_maxlen'],
         )
 
-        self.lr_scheduler = self.configure_lr_scheduler(self.optimizer)
+        self.lr_scheduler = build_lr_scheduler(
+            self.optimizer, self.config, steps_per_epoch=len(self.train_dataloader) # num of batches
+        )
 
         self.val_dataloader = self.data_processor.build_dataloader(
             val_dataset,
@@ -180,80 +181,6 @@ class SFT:
             print(f'Num. of training examples after filtering: {len(self.train_dataloader.dataset)}')
         max_input_len = max(len(input_ids) for input_ids in self.train_dataloader.dataset['input_ids'])
         print(f"Max input token length when training: {max_input_len}")
-
-
-    def configure_optimizer(self, params_to_optimize):
-
-        weight_decay = self.config['weight_decay']
-
-        decay, nodecay, optim_groups = [], [], []
-
-        if weight_decay == 0.0:
-
-            nodecay = params_to_optimize
-
-        else:
-            if self.config['peft_method'] == 'full_sft':
-
-                # don't decay: bias & layernorm vectors and embedding matrices
-                embedding_matrices = [m.weight for m in self.model.modules()
-                                      if isinstance(m, torch.nn.Embedding)]
-                for param in params_to_optimize:
-                    if param.dim() == 1 or any(param is m for m in embedding_matrices):
-                        nodecay.append(param)
-                    else:
-                        decay.append(param)
-
-            elif self.config['peft_method'] in ['sparse', 'lora'] and self.task == 'SEQ_CLS':
-
-                # don't decay: seq classification head
-                head = (self.model.deltas['score.weight'] # self.model.train_params['deltas']['score.weight']
-                        if self.config['peft_method'] == 'sparse' else
-                        self.model.score.weight)
-                for param in params_to_optimize:
-                    if param is head:
-                        nodecay.append(param)
-                    else:
-                        decay.append(param)
-
-            else: # SEQ_CLS + head_only or CAUSAL_LM + sparse/lora
-
-                decay = params_to_optimize
-
-        if decay:
-            optim_groups.append({'params': decay, 'weight_decay': weight_decay})
-        if nodecay:
-            optim_groups.append({'params': nodecay, 'weight_decay': 0.0})
-
-        return torch.optim.AdamW(optim_groups,
-                                 lr=self.config['lr'],
-                                 betas=(0.9, 0.99),
-                                 fused=torch.cuda.is_available())
-
-
-    def configure_lr_scheduler(self, optimizer):
-        assert self.config['lr_scheduler_type'] in ['linear', 'cosine']
-        lr_max, lr_min = self.config['lr'], self.config['lr_min']
-        warmup_steps = self.config['warmup_steps']
-        decay_steps = len(self.train_dataloader) * self.config['num_epochs'] - warmup_steps
-        assert lr_max >= lr_min and decay_steps > 0
-        def lr_lambda(i):
-            """lr decay with warmup"""
-            if lr_max == lr_min:
-                return 1.
-            elif i <= warmup_steps:
-                x = i / warmup_steps # 0 -> 1
-                return (lr_min + (lr_max - lr_min) * x) / lr_max
-            elif i <= warmup_steps + decay_steps:
-                x = (i - warmup_steps) / decay_steps # 0 -> 1
-                if self.config['lr_scheduler_type'] == 'linear':
-                    x = 1 - x # 1 -> 0
-                else: # 'cosine'
-                    x = 0.5 * (1 + math.cos(math.pi * x)) # 1 -> 0 
-                return (lr_min + (lr_max - lr_min) * x) / lr_max
-            else: # for extra train epochs beyond config['num_epochs']
-                return lr_min / lr_max
-        return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
 
     def train(self, num_epochs=None):
