@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "peft-sparta"
 version = "0.0.2"
-description = "SpaRTA adaptation wrapper. Invocation code to load and run SpaRTA adapters for inference"
+description = "SpaRTA for PEFT. Includes: SpaRTA adaptation wrapper for adding the adapter to a model; Classes to load and run SpaRTA adapters for inference; and a simple SFT trainer."
 requires-python = ">=3.9"
 dependencies = [
     "torch",
@@ -22,5 +22,17 @@ readme = "README.md"
 license = "Apache-2.0" 
 license-files = ["LICENSE"]
 
+[project.optional-dependencies]
+trainer = [
+    "pyyaml",
+    "datasets",
+    "peft",
+    "tensorboard",
+    "matplotlib",
+]
+
 [project.urls]
 Repository = "https://github.com/jmriosal/peft-sparta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
