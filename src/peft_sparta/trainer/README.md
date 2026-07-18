@@ -3,10 +3,12 @@
 # SFT Trainer
 
 `peft_sparta` includes a simple supervised fine-tuning trainer supporting 
+
 * SpaRTA, 
 * LoRA, 
 * head-only, and 
 * full fine-tuning, 
+
 for both `sequence-classification` and `causal-LM` tasks.
 
 ## Install
@@ -92,17 +94,16 @@ The trainer auto-detects the dataset format from the dataset columns.
 
 ### SEQ_CLS 
 
-- `text` + `label` columns 
+- `text` + `label` columns.
 
 
 ### CAUSAL_LM
 
-- messages in chat format for instruction tuning; a list of {"role", "content"}
-  dicts ending with an assistant turn. Loss is computed on the assistant response only.
+- `messages` column. Example messages must be in chat format for instruction tuning, i.e., a list of {"role", "content"} dicts and must end with an assistant turn. Loss is computed on the assistant response only. Use only with instruction-tuned models. The chat template is automatically applied during tokenization. These type of datasets are typically refer to as single-turn conversational prompt-completion datasets.
 
-- prompt + completion. Loss computed on the completion only. No chat template used.
+- `prompt` + `completion` columns. Loss computed on the completion only. No chat template used.
 
-- text. plain language modeling; loss computed on all tokens.
+- `text` column. plain language modeling; loss computed on all tokens.
 
 ## PEFT methods (peft_method)
 
@@ -119,11 +120,7 @@ Except for FFT, if you add new tokens, peft_config must also include train_new_t
 ```python
 trainer.save_model(merged=False, save_tokenizer=True, sft_info=True, overwrite=False)
 ```
-- merged=True: writes a standalone model with the adapter merged into the base model (loads as a plain model).
-
-- For LoRA this is an in-place merge that destroys the adapter — do not continue training after a merged save.
-
-- For SpaRTA the merge is non-destructive; you can keep training.
+- merged=True: writes a standalone model with the adapter merged into the base model (loads as a plain model). For LoRA this is an in-place merge that destroys the adapter — do not continue training after a merged save. For SpaRTA the merge is non-destructive; you can keep training.
 
 - merged=False: saves the adapter only.
 
