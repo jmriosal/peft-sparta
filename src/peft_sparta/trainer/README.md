@@ -124,6 +124,11 @@ The trainer auto-detects the dataset format from the dataset columns.
 Except for FFT, if you add new tokens, `peft_config` must also include `train_new_tokens` (True/False).
 
 
+## SFT_Config
+
+`SFT_Config` is a dict with SFT trainer defaults; you can override any key before constructing SFT.
+
+
 ## Saving
 
 ```python
@@ -134,9 +139,4 @@ trainer.save_model(merged=False, save_tokenizer=True, sft_info=True, overwrite=F
 - `merged=False` (default): saves only the adapter. Best for merging adapters or saving disk memory.
 
 - `overwrite=False`: raises if save_dir already exists.
-
-  
-## SFT_Config
-
-`SFT_Config` is a dict with SFT trainer defaults; you can override any key before constructing SFT. 
 
