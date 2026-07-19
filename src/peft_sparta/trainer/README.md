@@ -30,12 +30,15 @@ from peft_sparta.trainer import SFT, SFT_Config
 from datasets import load_dataset
 
 
-# 1. Task (SEQ_CLS) datasets (see formats below)
-train_ds = load_dataset('imdb', split='train')
-val_ds   = load_dataset('imdb', split='test')
+# 1. Dataset for a SEQ_CLS task (see formats below)
+
+ds = load_dataset('imdb')
+train_ds = ds['train']
+val_ds   = ds['test']
 
 
 # 2. Choose and config the model to load and adapt for SEQ_CLS task
+
 model_config = {
     'task': 'SEQ_CLS',
     'name_or_fpath': 'google/gemma-2b',
@@ -47,7 +50,9 @@ model_config = {
 
 
 # 3. Pick PEFT training method and config
+
 peft_method = 'lora'
+
 peft_config = {
     'task_type': 'SEQ_CLS', 
     'inference_mode': False, 
@@ -57,17 +62,18 @@ peft_config = {
 
 # 4. Setup SFT trainer (see defaults in SFT_Config)
 
-config = SFT_Config()
-config['num_epochs']  = 1
-config['lr']          = 1e-4
-config['bs_train']    = 24
-config['output_dir']  = 'runs/exp1'        # logs / plots (required)
-config['save_dir']    = 'runs/exp1/model'  # saved model  (required)
+sft_config = SFT_Config()
+
+sft_config['num_epochs']  = 1
+sft_config['lr']          = 1e-4
+sft_config['bs_train']    = 24
+sft_config['output_dir']  = 'runs/exp1'        # logs / plots (required)
+sft_config['save_dir']    = 'runs/exp1/model'  # saved model  (required)
 
 # optionally: config.update_from_yaml('my_config.yaml')
 
-trainer = SFT(
-    config,
+sft_trainer = SFT(
+    sft_config,
     model_config,
     train_ds,
     val_dataset=val_ds,
@@ -77,13 +83,14 @@ trainer = SFT(
 
 # 5. Train
 
-trainer.train()
+sft_trainer.train()
 
-# 6. Save + inspect
+# 6. Save
 
-trainer.save_model()   # saves adapter to save_dir
-trainer.plot_stats()   # saves plots into PDFs to output_dir
-trainer.save_stats()   # saves TensorBoard logs in output_dir
+sft_trainer.plot_stats()   # saves plots into PDFs to output_dir
+sft_trainer.save_stats()   # saves TensorBoard logs in output_dir
+sft_trainer.save_model()   # saves adapter to save_dir
+
 
 ```
 
@@ -105,6 +112,7 @@ The trainer auto-detects the dataset format from the dataset columns.
 
 - `text` column. plain language modeling; loss computed on all tokens.
 
+
 ## PEFT methods (peft_method)
 
 - `sparse` for SpaRTA
@@ -113,18 +121,19 @@ The trainer auto-detects the dataset format from the dataset columns.
 - `full_sft` (default) for full fine-tuning (FFT)
 
  
-Except for FFT, if you add new tokens, peft_config must also include train_new_tokens (True/False).
+Except for FFT, if you add new tokens, `peft_config` must also include `train_new_tokens` (True/False).
+
 
 ## Saving
 
 ```python
 trainer.save_model(merged=False, save_tokenizer=True, sft_info=True, overwrite=False)
 ```
-- merged=True: writes a standalone model with the adapter merged into the base model (loads as a plain model). For LoRA this is an in-place merge that destroys the adapter — do not continue training after a merged save. For SpaRTA the merge is non-destructive; you can keep training.
+- `merged=True`: saves a standalone model with the adapter merged into the base model (loads as a plain model, best for single-model serving and generation). For LoRA this is an in-place merge that destroys the adapter — do not continue training after a merged save. For SpaRTA the merge is non-destructive; you can keep training.
 
-- merged=False: saves the adapter only.
+- `merged=False` (default): saves only the adapter. Best for merging adapters or saving disk memory.
 
-- overwrite=False raises if save_dir already exists.
+- `overwrite=False`: raises if save_dir already exists.
 
   
 ## SFT_Config
