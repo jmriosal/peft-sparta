@@ -29,6 +29,7 @@ trainer = [
     "peft",
     "tensorboard",
     "matplotlib",
+    "transformers>=4.57",
 ]
 
 [project.urls]
