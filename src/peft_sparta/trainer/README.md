@@ -2,9 +2,9 @@
 
 `peft_sparta` includes a simple supervised fine-tuning trainer supporting 
 
-* SpaRTA, 
-* LoRA,
-* Full Fine-Tuning,
+* SpaRTA
+* LoRA
+* Full Fine-Tuning
 
 for both **sequence-classification (SEQ_CLS)** and **generation (CAUSAL_LM)** tasks.
 
