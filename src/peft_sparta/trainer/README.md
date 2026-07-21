@@ -46,7 +46,6 @@ model_config = {
     'num_classes': 2,
     'id2label': {0: 'negative', 1: 'positive'},
     'head_init': 'random',
-    'response_classes': None,
     'new_tokens': None,
     'dtype': 'bfloat16',
 }
@@ -101,7 +100,7 @@ sft_trainer.save_model()   # saves adapter to save_dir
 
 For `SEQ_CLS` tasks, `model_config` controls how the classification head of the model is initialized via `head_init`.
 
-- `head_init: 'random'`: the classification head is randomly initialized (and rescaled so classes initially have near-equal probabilities). Set `'response_classes': None`.
+- `head_init: 'random'`: the classification head is randomly initialized (and rescaled so classes initially have near-equal probabilities).
 
 - `head_init: 'from_pretrained'`: initialize the classification head from the pre-trained model's **vocabulary head**, using a corresponding token per class. Only for **instruction-tuned** models (which have a usable vocab head).
 Provide `response_classes`: a list of length `num_classes` giving the word the model would produce (after the instruction) for each class, **in label-index order** (matching `id2label`). The first token of each response word is used. For example:
@@ -115,7 +114,6 @@ model_config = {
     'id2label': {0: 'negative', 1: 'positive'},
     'head_init': 'from_pretrained',
     'response_classes': ['negative', 'positive'],   # 0 -> 'negative', 1 -> 'positive'
-    'new_tokens': None,
   }
 ```
 

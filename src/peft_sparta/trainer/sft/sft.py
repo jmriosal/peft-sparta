@@ -66,17 +66,26 @@ class SFT:
         config['peft_method'] = peft_method
         self.config = config
 
-        self.task = model_config.pop('task')
-        model_name = model_config['name_or_fpath']
+        self.task = model_config.pop('task')         # required
+        self.validate_model_config(model_config)
+        model_name = model_config['name_or_fpath']   # required
         model_dtype = model_config.get('dtype', model_config.get('torch_dtype', None)) # accept 'torch_dtype' as alias
-        new_tokens = model_config['new_tokens']
+        new_tokens = model_config.get('new_tokens', None)
         if self.task == 'SEQ_CLS':
+            num_classes = model_config['num_classes'] # required
+            id2label = model_config['id2label']       # required
+            head_init =  model_config['head_init']    # required
+            response_classes = model_config.get('response_classes', None)
+            if head_init == 'from_pretrained':
+                assert response_classes is not None # instruct models only
+            else: # 'random'
+                assert response_classes is None
             from .model_loader import load_classification_model
             tokenizer, model = load_classification_model(model_name,
-                                                         model_config['num_classes'],
-                                                         model_config['id2label'],
-                                                         model_config['head_init'],
-                                                         model_config['response_classes'], # instruct models
+                                                         num_classes,
+                                                         id2label,
+                                                         head_init,
+                                                         response_classes,
                                                          new_tokens,
                                                          dtype=model_dtype,
                                                          attention_dropout=self.config['attention_dropout'])
@@ -167,6 +176,20 @@ class SFT:
             self.stats['val_acc'] = []
 
         self.print_init_info()
+
+
+    def validate_model_config(self, model_config):
+        # detects misspelled keys to catch silently-ignored user key typos
+        common_keys = {'name_or_fpath', 'dtype', 'torch_dtype', 'new_tokens'}
+        task_keys = {
+            'SEQ_CLS': {'num_classes', 'id2label', 'head_init', 'response_classes'},
+            'CAUSAL_LM': set(),
+        }
+        allowed_keys = common_keys | task_keys.get(self.task, set())
+        unknown_keys = set(model_config) - allowed_keys
+        if unknown_keys:
+            raise ValueError(f"Unknown model_config key(s): {sorted(unknown_keys)}. "
+                             f"Allowed keys for task={self.task!r}: {sorted({'task'} | allowed_keys)}")
 
 
     def print_init_info(self):
@@ -413,5 +436,4 @@ class SFT:
             self.stats, self.config, loss_baseline,
             fname_prefix=fname_prefix
         )
-
 
