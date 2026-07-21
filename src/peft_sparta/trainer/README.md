@@ -1,6 +1,6 @@
 # SFT Trainer
 
-`peft_sparta` includes a simple supervised fine-tuning trainer supporting 
+`peft_sparta` includes a simple supervised fine-tuning trainer supporting the following SFT methods:
 
 * SpaRTA
 * LoRA
@@ -20,6 +20,7 @@ pip install peft-sparta[trainer]
 
 This adds them on top of the core install.
 
+
 ## Quickstart
 
 ### SEQ_CLS (sequence-classification) task
@@ -30,14 +31,14 @@ from peft_sparta.trainer import SFT, SFT_Config
 from datasets import load_dataset
 
 
-# 1. Dataset for a SEQ_CLS task (see formats below)
+# 1. Load a SEQ_CLS task dataset (see formats below)
 
 ds = load_dataset('imdb')
 train_ds = ds['train']
 val_ds   = ds['test']
 
 
-# 2. Choose and config the model to load and adapt for SEQ_CLS task
+# 2. Choose and config the model to load and adapt for the SEQ_CLS task
 
 model_config = {
     'task': 'SEQ_CLS',
@@ -47,11 +48,11 @@ model_config = {
     'head_init': 'random',
     'response_classes': None,
     'new_tokens': None,
-    'dtype': "bfloat16",
+    'dtype': 'bfloat16',
 }
 
 
-# 3. Pick PEFT training method and config
+# 3. Pick PEFT training method and configure it
 
 peft_method = 'lora'
 
@@ -100,9 +101,9 @@ sft_trainer.save_model()   # saves adapter to save_dir
 
 For `SEQ_CLS` tasks, `model_config` controls how the classification head of the model is initialized via `head_init`.
 
-- `head_init: 'random'`: the classification head is randomly initialized (and rescaled so initial logits are near zero). Set `'response_classes': None`.
+- `head_init: 'random'`: the classification head is randomly initialized (and rescaled so classes initially have near-equal probabilities). Set `'response_classes': None`.
 
-- `head_init: 'from_pretrained'`: initialize the classification head from the pre-trained model's **vocabulary head**, using a token each class corresponds to. Only for **instruction-tuned** models (which have a usable vocab head).
+- `head_init: 'from_pretrained'`: initialize the classification head from the pre-trained model's **vocabulary head**, using a corresponding token per class. Only for **instruction-tuned** models (which have a usable vocab head).
 Provide `response_classes`: a list of length `num_classes` giving the word the model would produce (after the instruction) for each class, **in label-index order** (matching `id2label`). The first token of each response word is used. For example:
 
 
@@ -128,21 +129,22 @@ model_config = {
 from peft_sparta.trainer import SFT, SFT_Config
 from datasets import load_dataset
 
-# 1. Dataset for a CAUSAL_LM task (see formats below)
+# 1. Load a CAUSAL_LM task dataset (see formats below)
 
 ds = load_dataset('trl-lib/Capybara')['train']   # has a 'messages' column (chat format)
-train_ds, val_ds = ds.train_test_split(test_size=1000, shuffle = True).values()
+train_ds, val_ds = ds.train_test_split(test_size=1000, shuffle=True).values()
 
-# 2. Model to load and adapt for CAUSAL_LM
+# 2. Choose model to load and adapt to the CAUSAL_LM task
 
 model_config = {
     'task': 'CAUSAL_LM',
     'name_or_fpath': 'google/gemma-2b-it',   # instruct model with chat template
     'new_tokens': None,
-    'dtype': "bfloat16",
+    'dtype': 'bfloat16',
 }
 
 # 3. PEFT method + config
+
 peft_method = 'lora'
 peft_config = {
     'task_type': 'CAUSAL_LM',
@@ -152,6 +154,7 @@ peft_config = {
 }
 
 # 4. Setup SFT trainer config
+
 sft_config = SFT_Config()
 sft_config['output_dir'] = 'runs/exp1'
 sft_config['save_dir']   = 'runs/exp1/model'
@@ -182,7 +185,7 @@ a base model is fine for datasets with `prompt+completion` or plain `text` forma
 
 ## Supported dataset formats
 
-The trainer auto-detects the dataset format from the dataset columns.
+The trainer auto-detects the dataset format from the dataset's columns.
 
 ### SEQ_CLS 
 
@@ -191,21 +194,21 @@ The trainer auto-detects the dataset format from the dataset columns.
 
 ### CAUSAL_LM
 
-- `messages` column. Example messages must be in chat format for instruction tuning, i.e., a list of {"role", "content"} dicts and must end with an assistant turn. Loss is computed on the assistant final response only. Use only with instruction-tuned models. The chat template is automatically applied during tokenization. This type of dataset is typically referred to as single-turn conversational (chat) prompt-completion dataset.
+- `messages` column. Example messages must be in chat format for instruction tuning, i.e., a list of {"role", "content"} dicts, ending with an assistant turn. Loss is computed on the assistant's final response only. Use only with instruction-tuned models. The chat template is automatically applied during tokenization. These are typically referred to as single-turn conversational (chat) prompt-completion datasets.
 
 - `prompt` + `completion` columns. Loss computed on the completion only. No chat template used.
 
-- `text` column. plain language modeling; loss computed on all tokens.
+- `text` column. Plain language modeling; loss computed on all tokens.
 
 
 ## PEFT methods
 
-We provide support for the following traning methods by choosing `peft_method` to be
+We provide support for the following training methods by choosing `peft_method` to be
 
 - `'sparse'` for SpaRTA
-- `'lora'` for LoRA (uses HF PEFT). Make sure to add a task_type in peft_config.
+- `'lora'` for LoRA (uses HF PEFT). Make sure to add a `task_type` in `peft_config`.
 - `'head_only'`, to train only the classification head (SEQ_CLS tasks only)
-- `'full_sft'` (default) for full fine-tuning (FFT)
+- `'full_sft'` (default) for full parameter fine-tuning (FFT)
 
 Except for Full Fine-Tuning (FFT), if you add new tokens, `peft_config` must also include `train_new_tokens` (True/False).
 
@@ -220,9 +223,9 @@ Except for Full Fine-Tuning (FFT), if you add new tokens, `peft_config` must als
 ```python
 trainer.save_model(merged=False, save_tokenizer=True, sft_info=True, overwrite=False)
 ```
-- `merged=True`: saves a standalone model with the adapter merged into the base model (loads as a plain model, best for single-model serving and generation). For LoRA this is an in-place merge that destroys the adapter — do not continue training after a merged save. For SpaRTA the merge is non-destructive; you can keep training.
+- `merged=True`: saves a standalone model with the adapter merged into the model (loads as a plain model, best for single-model serving and generation). For LoRA, this is an in-place merge that destroys the adapter: do not continue training after a merged save. For SpaRTA, the merge is non-destructive; you can keep training.
 
-- `merged=False` (default): saves only the adapter. Best for merging adapters or saving disk space.
+- `merged=False` (default): saves only the adapter. Best for merging adapters after training them, or saving disk space.
 
-- `overwrite=False`: raises if save_dir already exists.
+- `overwrite=False`: raises if `save_dir` already exists.
 
