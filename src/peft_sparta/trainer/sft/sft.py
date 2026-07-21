@@ -67,38 +67,41 @@ class SFT:
         self.config = config
 
         self.task = model_config.pop('task')
+        model_name = model_config['name_or_fpath']
+        model_dtype = model_config.get('dtype', model_config.get('torch_dtype', None)) # accept 'torch_dtype' as alias
+        new_tokens = model_config['new_tokens']
         if self.task == 'SEQ_CLS':
             from .model_loader import load_classification_model
-            tokenizer, model = load_classification_model(model_config['name_or_fpath'],
+            tokenizer, model = load_classification_model(model_name,
                                                          model_config['num_classes'],
                                                          model_config['id2label'],
                                                          model_config['head_init'],
                                                          model_config['response_classes'], # instruct models
-                                                         model_config['new_tokens'],
-                                                         dtype=model_config.get('dtype', None),
+                                                         new_tokens,
+                                                         dtype=model_dtype,
                                                          attention_dropout=self.config['attention_dropout'])
         elif self.task == 'CAUSAL_LM':
             if peft_method == 'head_only':
                 raise ValueError(f"{peft_method=} not supported for GENERATION tasks")
             from .model_loader import load_generative_model
-            tokenizer, model = load_generative_model(model_config['name_or_fpath'],
-                                                     model_config['new_tokens'],
-                                                     dtype=model_config.get('dtype', None),
+            tokenizer, model = load_generative_model(model_name,
+                                                     new_tokens,
+                                                     dtype=model_dtype,
                                                      attention_dropout=self.config['attention_dropout'])
         else:
             raise NotImplementedError(f"Task: {self.task} not implemented")
   
         self.tokenizer = tokenizer
 
-        self.num_added_tokens = len(model_config['new_tokens'] or [])
-        if model_config['new_tokens'] and peft_config:
+        self.num_added_tokens = len(new_tokens or [])
+        if new_tokens and peft_config:
             if 'train_new_tokens' not in peft_config:
                 raise ValueError("'peft_config' must include 'train_new_tokens' (True/False) "
                                  "when new tokens are added to the model")
             if peft_config.pop('train_new_tokens'):
                 print(f">> Making fully-trainable the embeddings of {model_config['new_tokens'] = }")
                 # make new token embeddings fully-trainable (in non full_sft methods)
-                new_token_ids = self.tokenizer.convert_tokens_to_ids(model_config['new_tokens'])
+                new_token_ids = self.tokenizer.convert_tokens_to_ids(new_tokens)
                 if peft_method == 'sparse':
                     peft_config['trainable_tokens'] = new_token_ids
                 elif peft_method == 'lora': # https://github.com/huggingface/peft/pull/2376

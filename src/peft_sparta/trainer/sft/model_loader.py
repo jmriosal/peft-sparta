@@ -3,6 +3,7 @@ import json
 import math
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModelForSequenceClassification
+from transformers import __version__ as transformers_version
 from safetensors import safe_open
 
 
@@ -15,6 +16,8 @@ else:
 def load_generative_model(model_name, new_tokens=None, **kwargs):
 
     device_map = kwargs.pop('device_map', _device_map)
+
+    kwargs = fix_dtype(kwargs)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -51,6 +54,8 @@ def load_classification_model(model_name,
                               **kwargs):
     
     device_map = kwargs.pop('device_map', _device_map)
+
+    kwargs = fix_dtype(kwargs)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -201,3 +206,12 @@ def resize_token_embeddings(model, num_added_tokens=1, init_centered=False):
     embeddings.weight.data = torch.cat((embeddings.weight.data, new_embeddings))
     embeddings.num_embeddings += num_added_tokens
     model.config.vocab_size += num_added_tokens
+
+
+
+def fix_dtype(kwargs):
+    dtype = kwargs.pop('dtype', None)
+    if dtype:
+        dtype_kwarg = 'dtype' if int(transformers_version.split('.')[0]) >= 5 else 'torch_dtype'
+        kwargs[dtype_kwarg] = dtype
+    return kwargs
