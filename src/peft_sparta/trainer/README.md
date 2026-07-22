@@ -205,8 +205,8 @@ We provide support for the following training methods by choosing `peft_method` 
 
 - `'sparse'` for SpaRTA. Use `peft_config = {'sparsity': 0.999}` to select the level of sparsity, in this case 99.9%; you can also use e.g. `peft_config['frozen_modules'] = ['embed_tokens', 'mlp', 'norm', 'self_attn.o']` to completely freeze specific model modules.
 - `'lora'` for LoRA (uses HF PEFT). Make sure to add a `task_type` in `peft_config`.
-- `'head_only'`, to train only the classification head (SEQ_CLS tasks only)
-- `'full_sft'` (default) for full parameter fine-tuning (FFT)
+- `'head_only'` to train only the classification head (SEQ_CLS tasks only).
+- `'full_sft'` (default) for full parameter fine-tuning (FFT).
 
 Except for Full Fine-Tuning (FFT), if you add new tokens, `peft_config` must also include `train_new_tokens` (True/False).
 
