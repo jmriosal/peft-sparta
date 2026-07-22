@@ -40,7 +40,11 @@ def load_generative_model(model_name, new_tokens=None, **kwargs):
     if new_tokens:
         add_tokens(tokenizer, new_tokens)
         model.resize_token_embeddings(len(tokenizer))
-        # fixing possible stale attribute for model printout
+        # sanity check
+        ie = model.get_input_embeddings().weight
+        oe = model.get_output_embeddings().weight
+        assert ie.shape[0] == oe.shape[0] == len(tokenizer) == model.config.vocab_size
+        # fix possible stale attribute for model printout
         lm_head = model.get_output_embeddings()
         lm_head.out_features = lm_head.weight.shape[0]
 
