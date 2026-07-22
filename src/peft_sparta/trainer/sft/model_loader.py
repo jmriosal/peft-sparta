@@ -40,6 +40,9 @@ def load_generative_model(model_name, new_tokens=None, **kwargs):
     if new_tokens:
         add_tokens(tokenizer, new_tokens)
         model.resize_token_embeddings(len(tokenizer))
+        # fixing possible stale attribute for model printout
+        lm_head = model.get_output_embeddings()
+        lm_head.out_features = lm_head.weight.shape[0]
 
     return tokenizer, model
 
