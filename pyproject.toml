@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "peft-sparta"
-version = "0.0.2"
+version = "0.0.3"
 description = "SpaRTA for PEFT. Includes: SpaRTA adaptation wrapper for adding the adapter to a model; Classes to load and run SpaRTA adapters for inference; and a simple SFT trainer."
 requires-python = ">=3.9"
 dependencies = [
